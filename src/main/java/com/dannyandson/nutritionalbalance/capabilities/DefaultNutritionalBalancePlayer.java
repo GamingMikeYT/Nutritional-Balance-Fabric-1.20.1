@@ -1,0 +1,169 @@
+package com.dannyandson.nutritionalbalance.capabilities;
+
+import com.dannyandson.nutritionalbalance.Config;
+import com.dannyandson.nutritionalbalance.api.INutritionalBalancePlayer;
+import com.dannyandson.nutritionalbalance.api.IPlayerNutrient;
+import com.dannyandson.nutritionalbalance.nutrients.Nutrient;
+import com.dannyandson.nutritionalbalance.nutrients.WorldNutrients;
+import net.minecraft.item.FoodComponent;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class DefaultNutritionalBalancePlayer implements INutritionalBalancePlayer {
+
+    private final List<IPlayerNutrient> playerNutrients = new ArrayList<>();
+    private float savedSaturation;
+    private IPlayerNutrient.NutrientStatus cachedStatus = IPlayerNutrient.NutrientStatus.SAFE;
+
+    public DefaultNutritionalBalancePlayer()
+    {
+        for (Nutrient nutrient:WorldNutrients.get())
+        {
+            this.playerNutrients.add(new DefaultPlayerNutrient(nutrient));
+        }
+    }
+
+    @Override
+    public List<IPlayerNutrient> getPlayerNutrients()
+    {
+        return this.playerNutrients;
+    }
+
+    @Override
+    public IPlayerNutrient getPlayerNutrientByName(String name) {
+        for (IPlayerNutrient iPlayerNutrient:this.playerNutrients)
+        {
+            if (iPlayerNutrient.getNutrient().name.equals(name))
+                return iPlayerNutrient;
+        }
+        return null;
+    }
+
+
+    public void processSaturationChange(float currentSaturation) {
+        System.out.println(
+                "[Nutrient Decay Debug] Current foodpoints=" + currentSaturation
+                        + ", saved foodpoints=" + this.savedSaturation
+                        + ", decay rate=" + Config.NUTRIENT_DECAY_RATE.get()
+        );
+
+        if (currentSaturation == this.savedSaturation) {
+            return;
+        }
+
+        if (currentSaturation < this.savedSaturation) {
+            float decrementer = Config.NUTRIENT_DECAY_RATE.get().floatValue()
+                    * (currentSaturation - this.savedSaturation)
+                    / this.playerNutrients.size();
+
+            System.out.println(
+                    "[Nutrient Decay Debug] Decrement per nutrient=" + decrementer
+            );
+
+            for (IPlayerNutrient playernutrient : this.playerNutrients) {
+                float before = playernutrient.getValue();
+                playernutrient.changeValue(decrementer);
+
+                System.out.println(
+                        "[Nutrient Decay Debug] " + playernutrient.getNutrientName()
+                                + ": " + before + " -> " + playernutrient.getValue()
+                );
+            }
+        }
+
+        this.resetSavedSaturation(currentSaturation);
+    }
+
+
+    public void resetSavedSaturation(float savedSaturation)
+    {
+        this.savedSaturation = savedSaturation;
+    }
+
+    @Override
+
+    public void consume(ItemStack itemStack, World world) {
+        Item item = itemStack.getItem();
+        FoodComponent food = item.getFoodComponent();
+
+        System.out.println("[Nutrient Debug] consume() entered for: " + item);
+
+        if (food != null) {
+            List<Nutrient> nutrients = WorldNutrients.getNutrients(itemStack, world);
+
+            System.out.println("[Nutrient Debug] Nutrients found: "
+                    + nutrients.stream().map(n -> n.name).toList());
+
+            for (Nutrient nutrient : nutrients) {
+
+                System.out.println(
+                        "[Nutrient Compare] Food=" + item
+                                + ", hunger=" + food.getHunger()
+                                + ", saturationModifier=" + food.getSaturationModifier()
+                                + ", nutrientCount=" + nutrients.size()
+                                + ", incrementRate=" + Config.NUTRIENT_INCREMENT_RATE.get()
+                                + ", maxFoodValue=" + Config.NUTRIENT_MAX_FOOD_VALUE.get()
+                );
+
+                float nutrientUnits = WorldNutrients.getEffectiveFoodQuality(food, nutrients.size())
+                        * Config.NUTRIENT_INCREMENT_RATE.get().floatValue() / nutrients.size();
+
+                System.out.println("[Nutrient Debug] Updating nutrient: " + nutrient.name
+                        + " by " + nutrientUnits);
+
+                this.getPlayerNutrientByName(nutrient.name).changeValue(nutrientUnits);
+
+                System.out.println("[Nutrient Debug] Finished updating nutrient: " + nutrient.name);
+            }
+        } else {
+            System.out.println("[Nutrient Debug] FoodComponent is null!");
+        }
+    }
+
+
+    @Override
+    public void consume(List<IPlayerNutrient> nutrients, float health, float saturation) {
+        for (IPlayerNutrient nutrient:nutrients) {
+            float nutrientUnits=WorldNutrients.getEffectiveFoodQuality(health,saturation,nutrients.size()) * Config.NUTRIENT_INCREMENT_RATE.get().floatValue() / nutrients.size();
+            this.getPlayerNutrientByName(nutrient.getNutrientName()).changeValue(nutrientUnits);
+        }
+    }
+
+    public IPlayerNutrient.NutrientStatus getStatus()
+    {
+        boolean safeFound = false;
+        for (IPlayerNutrient playernutrient : this.playerNutrients)
+        {
+            IPlayerNutrient.NutrientStatus nutrientStatus = playernutrient.getStatus();
+            if (nutrientStatus==IPlayerNutrient.NutrientStatus.MALNOURISHED) {
+                this.cachedStatus =IPlayerNutrient.NutrientStatus.MALNOURISHED;
+                return IPlayerNutrient.NutrientStatus.MALNOURISHED;
+            }
+            if (nutrientStatus==IPlayerNutrient.NutrientStatus.ENGORGED) {
+                this.cachedStatus =IPlayerNutrient.NutrientStatus.ENGORGED;
+                return IPlayerNutrient.NutrientStatus.ENGORGED;
+            }
+            if (nutrientStatus==IPlayerNutrient.NutrientStatus.SAFE) {
+                safeFound = true;
+            }
+        }
+
+        if (!safeFound) {
+            this.cachedStatus =IPlayerNutrient.NutrientStatus.ON_TARGET;
+            return IPlayerNutrient.NutrientStatus.ON_TARGET;
+        }
+        else {
+            this.cachedStatus =IPlayerNutrient.NutrientStatus.SAFE;
+            return IPlayerNutrient.NutrientStatus.SAFE;
+        }
+    }
+
+    public IPlayerNutrient.NutrientStatus getCachedStatus()
+    {
+        return this.cachedStatus;
+    }
+}
