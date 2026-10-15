@@ -1,0 +1,30 @@
+
+{
+  "schemaVersion": 1,
+  "id": "nutritionalbalance",
+  "version": "7.0.3-fabric",
+  "name": "Nutritional Balance",
+  "description": "A mod that enhances the food system to encourage a balanced diet by tracking nutrients, rewarding balance and discouraging imbalance.",
+  "authors": [
+    "Danny"
+  ],
+  "license": "GNU General Public License v3.0",
+  "icon": "logo.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.dannyandson.nutritionalbalance.NutritionalBalance"
+    ],
+    "client": [
+      "com.dannyandson.nutritionalbalance.NutritionalBalanceClient"
+    ]
+  },
+  "mixins": [
+    "nutritionalbalance.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "fabric": "*",
+    "minecraft": "1.20.1"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "mappings": {
+    "com/dannyandson/nutritionalbalance/mixin/ItemStackMixin": {
+      "finishUsing": "Lnet/minecraft/class_1799;method_7910(Lnet/minecraft/class_1937;Lnet/minecraft/class_1309;)Lnet/minecraft/class_1799;"
+    }
+  },
+  "data": {
+    "named:intermediary": {
+      "com/dannyandson/nutritionalbalance/mixin/ItemStackMixin": {
+        "finishUsing": "Lnet/minecraft/class_1799;method_7910(Lnet/minecraft/class_1937;Lnet/minecraft/class_1309;)Lnet/minecraft/class_1799;"
+      }
+    }
+  }
+}
