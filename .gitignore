@@ -1,6 +1,5 @@
 .gradle/
 build/
 run/
-screenshots/
 .idea/
 *.iml
