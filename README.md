@@ -9,6 +9,9 @@ This project is an unofficial Fabric port of Nutritional Balance 7.0.3, original
 
 This port modifies the original project to work with an older Minecraft version and a different mod loader. It is not an official release of the original author.
 
+# Dev Note
+Psst... I didn't add lunchboxes. I'm too lazy, do it yourself if you want it that badly.
+
 ## Attribution
 This project is distributed under the GNU General Public License v3. Please see the LICENSE file for the full license terms.
 
