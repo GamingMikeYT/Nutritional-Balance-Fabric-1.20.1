@@ -9,6 +9,9 @@ This project is an unofficial Fabric port of Nutritional Balance 7.0.3, original
 
 This port modifies the original project to work with an older Minecraft version and a different mod loader. It is not an official release of the original author.
 
+## Attribution
+This project is distributed under the GNU General Public License v3. Please see the LICENSE file for the full license terms.
+
 ## About
 Nutritional Balance is a Minecraft mod that enhances the food system to encourage you to eat a balanced diet.
 Eating a variety of nutrients with the right balance will make you stronger and faster.
