@@ -45,12 +45,6 @@ public class DefaultNutritionalBalancePlayer implements INutritionalBalancePlaye
 
 
     public void processSaturationChange(float currentSaturation) {
-        System.out.println(
-                "[Nutrient Decay Debug] Current foodpoints=" + currentSaturation
-                        + ", saved foodpoints=" + this.savedSaturation
-                        + ", decay rate=" + Config.NUTRIENT_DECAY_RATE.get()
-        );
-
         if (currentSaturation == this.savedSaturation) {
             return;
         }
@@ -60,18 +54,10 @@ public class DefaultNutritionalBalancePlayer implements INutritionalBalancePlaye
                     * (currentSaturation - this.savedSaturation)
                     / this.playerNutrients.size();
 
-            System.out.println(
-                    "[Nutrient Decay Debug] Decrement per nutrient=" + decrementer
-            );
-
             for (IPlayerNutrient playernutrient : this.playerNutrients) {
                 float before = playernutrient.getValue();
                 playernutrient.changeValue(decrementer);
 
-                System.out.println(
-                        "[Nutrient Decay Debug] " + playernutrient.getNutrientName()
-                                + ": " + before + " -> " + playernutrient.getValue()
-                );
             }
         }
 
@@ -90,13 +76,8 @@ public class DefaultNutritionalBalancePlayer implements INutritionalBalancePlaye
         Item item = itemStack.getItem();
         FoodComponent food = item.getFoodComponent();
 
-        System.out.println("[Nutrient Debug] consume() entered for: " + item);
-
         if (food != null) {
             List<Nutrient> nutrients = WorldNutrients.getNutrients(itemStack, world);
-
-            System.out.println("[Nutrient Debug] Nutrients found: "
-                    + nutrients.stream().map(n -> n.name).toList());
 
             for (Nutrient nutrient : nutrients) {
 
@@ -112,15 +93,11 @@ public class DefaultNutritionalBalancePlayer implements INutritionalBalancePlaye
                 float nutrientUnits = WorldNutrients.getEffectiveFoodQuality(food, nutrients.size())
                         * Config.NUTRIENT_INCREMENT_RATE.get().floatValue() / nutrients.size();
 
-                System.out.println("[Nutrient Debug] Updating nutrient: " + nutrient.name
-                        + " by " + nutrientUnits);
+
 
                 this.getPlayerNutrientByName(nutrient.name).changeValue(nutrientUnits);
 
-                System.out.println("[Nutrient Debug] Finished updating nutrient: " + nutrient.name);
             }
-        } else {
-            System.out.println("[Nutrient Debug] FoodComponent is null!");
         }
     }
 

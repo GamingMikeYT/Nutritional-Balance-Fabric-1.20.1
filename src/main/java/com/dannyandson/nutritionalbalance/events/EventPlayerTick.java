@@ -48,7 +48,6 @@ public class EventPlayerTick {
 
                 float foodpoints = playerSaturation + playerFoodLevel;
 
-                System.out.println("[Nutrient Decay Debug] EventPlayerTick is calling processSaturationChange()");
                 iNutritionalBalancePlayer.processSaturationChange(foodpoints);
 
                 /*
@@ -135,6 +134,7 @@ public class EventPlayerTick {
                                             true
                                     )
                             );
+
                         }
 
                         if (malnourished != null)

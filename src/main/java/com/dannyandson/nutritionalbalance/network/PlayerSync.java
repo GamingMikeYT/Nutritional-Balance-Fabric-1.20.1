@@ -47,13 +47,6 @@ public record PlayerSync(String jsonData, boolean openGUI) {
                 IPlayerNutrient iPlayerNutrient :
                 iNutritionalBalancePlayer.getPlayerNutrients()
         ) {
-            // Temporary diagnostic: log the values the server is sending.
-            System.out.println(
-                    "[NutritionalBalance] Server sync: "
-                            + iPlayerNutrient.getNutrientName()
-                            + ", value=" + iPlayerNutrient.getValue()
-            );
-
             json.addProperty(
                     iPlayerNutrient.getNutrientName(),
                     iPlayerNutrient.getValue()
@@ -92,10 +85,6 @@ public record PlayerSync(String jsonData, boolean openGUI) {
                         );
 
                 if (worldNutrient == null) {
-                    System.out.println(
-                            "[NutritionalBalance] Unknown nutrient received: "
-                                    + jsonElementEntry.getKey()
-                    );
                     continue;
                 }
 
@@ -108,13 +97,6 @@ public record PlayerSync(String jsonData, boolean openGUI) {
             }
 
             float syncedValue = jsonElementEntry.getValue().getAsFloat();
-
-            System.out.println(
-                    "[NutritionalBalance] Client sync: "
-                            + jsonElementEntry.getKey()
-                            + ", received=" + syncedValue
-                            + ", before=" + playerNutrient.getValue()
-            );
 
             playerNutrient.setValue(syncedValue);
         }

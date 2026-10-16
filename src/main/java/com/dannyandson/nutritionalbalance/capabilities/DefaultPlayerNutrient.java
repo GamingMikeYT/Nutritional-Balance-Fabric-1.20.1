@@ -16,15 +16,6 @@ public class DefaultPlayerNutrient implements IPlayerNutrient {
     public DefaultPlayerNutrient(Nutrient nutrient) {
         this.nutrientname = nutrient.name;
         this.value = Config.NUTRIENT_INITIAL.get().floatValue();
-
-        // Temporary diagnostic: check the configured starting value.
-        System.out.println(
-                "[NutritionalBalance] Created nutrient: "
-                        + this.nutrientname
-                        + ", initial value=" + this.value
-                        + ", configured initial="
-                        + Config.NUTRIENT_INITIAL.get()
-        );
     }
 
     @Override

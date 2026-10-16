@@ -24,18 +24,7 @@ public class ItemStackMixin {
     ) {
         ItemStack originalStack = (ItemStack) (Object) this;
 
-        System.out.println(
-                "[Nutrient Debug] finishUsing called: item="
-                        + originalStack.getItem()
-                        + ", client=" + world.isClient
-                        + ", user=" + user.getClass().getSimpleName()
-        );
-
         if (!world.isClient && user instanceof ServerPlayerEntity player) {
-            System.out.println(
-                    "[Nutrient Debug] Server food finishUsing callback fired"
-            );
-
             EventUseItem.onUseItemFinish(originalStack, world, player);
         }
     }

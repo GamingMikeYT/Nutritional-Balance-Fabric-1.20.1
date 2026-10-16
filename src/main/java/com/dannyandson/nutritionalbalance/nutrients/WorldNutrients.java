@@ -118,16 +118,6 @@ public class WorldNutrients {
 
         Item targetItem = item.getItem();
 
-        if (Registries.ITEM.getId(targetItem).toString().equals("minecraft:bread")) {
-            NutritionalBalance.LOGGER.info(
-                    "[Nutrient Debug] Bread cache status: containsKey={}, cached nutrients={}",
-                    nutrientMap.containsKey(targetItem),
-                    nutrientMap.containsKey(targetItem)
-                            ? nutrientMap.get(targetItem).stream().map(n -> n.name).toList()
-                            : "NOT CACHED"
-            );
-        }
-
         if (!nutrientMap.containsKey(targetItem)) {
 
             if (world != null && world.isClient()) {
@@ -140,65 +130,6 @@ public class WorldNutrients {
             } else if (world != null) {
 
                 List<Nutrient> nutrientList = new ArrayList<>();
-
-                Identifier debugItemId = Registries.ITEM.getId(targetItem);
-                boolean debugItem =
-                        debugItemId != null
-                                && (debugItemId.toString().equals("minecraft:apple")
-                                || debugItemId.toString().equals("minecraft:bread"));
-
-                if (debugItem) {
-                    NutritionalBalance.LOGGER.info(
-                            "[Nutrient Debug] Checking item: {}",
-                            debugItemId
-                    );
-
-                    NutritionalBalance.LOGGER.info(
-                            "[Nutrient Debug] Item tags: {}",
-                            item.streamTags()
-                                    .map(tag -> "#" + tag.id().getNamespace()
-                                            + ":" + tag.id().getPath())
-                                    .sorted()
-                                    .toList()
-                    );
-
-                    NutritionalBalance.LOGGER.info(
-                            "[Nutrient Debug] Fruit config: {}",
-                            Config.LIST_Fruits.get()
-                    );
-
-
-                    NutritionalBalance.LOGGER.info(
-                            "[Nutrient Debug] Carb config: {}",
-                            Config.LIST_CARBS.get()
-                    );
-
-                    NutritionalBalance.LOGGER.info(
-                            "[Nutrient Debug] Bread tag configured: {}",
-                            Config.LIST_CARBS.get().contains("#c:bread/wheat")
-                    );
-
-                    NutritionalBalance.LOGGER.info(
-                            "[Nutrient Debug] Bread tag present on item: {}",
-                            item.streamTags().anyMatch(tag ->
-                                    tag.id().toString().equals("c:bread/wheat"))
-                    );
-
-                    NutritionalBalance.LOGGER.info(
-                            "[Nutrient Debug] Vegetable config: {}",
-                            Config.LIST_VEGETABLES.get()
-                    );
-
-                    NutritionalBalance.LOGGER.info(
-                            "[Nutrient Debug] Protein config: {}",
-                            Config.LIST_PROTEINS.get()
-                    );
-
-                    NutritionalBalance.LOGGER.info(
-                            "[Nutrient Debug] Sugar config: {}",
-                            Config.LIST_SUGARS.get()
-                    );
-                }
 
                 // Match the item's tags against configured category tags.
                 for (TagKey<Item> tagKey : item.streamTags()
@@ -262,14 +193,6 @@ public class WorldNutrients {
 
                 if (Config.LIST_VEGETABLES.get().contains(itemRegistryName)) {
                     addIfPresent(nutrientList, "vegetables");
-                }
-
-                if (debugItem) {
-                    NutritionalBalance.LOGGER.info(
-                            "[Nutrient Debug] After direct tag/config matching for {}: {}",
-                            debugItemId,
-                            nutrientList.stream().map(n -> n.name).toList()
-                    );
                 }
 
                 boolean depthLimited = false;
@@ -336,22 +259,7 @@ public class WorldNutrients {
                     }
                 }
 
-                if (debugItem) {
-                    NutritionalBalance.LOGGER.info(
-                            "[Nutrient Debug] Final nutrients for {}: {} (iteration={})",
-                            debugItemId,
-                            nutrientList.stream().map(n -> n.name).toList(),
-                            iteration
-                    );
-                }
-
                 if (!depthLimited) {
-                    if (Registries.ITEM.getId(targetItem).toString().equals("minecraft:bread")) {
-                        NutritionalBalance.LOGGER.info(
-                                "[Nutrient Debug] CACHING bread nutrients: {}",
-                                nutrientList.stream().map(n -> n.name).toList()
-                        );
-                    }
                     nutrientMap.put(targetItem, nutrientList);
                 } else {
                     return nutrientList;

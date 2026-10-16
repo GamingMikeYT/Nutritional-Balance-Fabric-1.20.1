@@ -162,15 +162,6 @@ public class NutrientGUIHelper {
                                 * columnWidth
                 );
 
-                System.out.println(
-                        "[NutritionalBalance] Nutrient: "
-                                + playerNutrient.getNutrientName()
-                                + ", value=" + playerNutrient.getValue()
-                                + ", max=" + Config.NUTRIENT_MAX.get()
-                                + ", columnWidth=" + columnWidth
-                                + ", calculatedWidth=" + nutrientValueWidth
-                );
-
                 // Check if this is a nonessential nutrient
                 boolean nonEssentialNutrient = false;
 
