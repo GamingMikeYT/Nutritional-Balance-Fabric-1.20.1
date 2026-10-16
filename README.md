@@ -15,7 +15,7 @@ Psst... I didn't add lunchboxes. I'm too lazy, do it yourself if you want it tha
 ## Attribution
 This project is distributed under the GNU General Public License v3. Please see the LICENSE file for the full license terms.
 
-## About
+## About (Description of the original mod)
 Nutritional Balance is a Minecraft mod that enhances the food system to encourage you to eat a balanced diet.
 Eating a variety of nutrients with the right balance will make you stronger and faster.
 Ignoring your nutritional balance, however, can slow you down and weaken you.
